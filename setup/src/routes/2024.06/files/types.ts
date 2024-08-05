@@ -25,9 +25,11 @@ export type MailuEnvSpecificOptions = {
   hostnames: string;
   postmaster: string;
   tlsFlavor: 'letsencrypt' | 'cert' | 'notls' | 'mail' | 'mail-letsencrypt';
-  rateLimitAuthIP?: number;
-  rateLimitAuthUser?: number;
-  rateLimitMessage?: number;
+  rateLimit: {
+    authIP: number;
+    authUser: number;
+    message: number;
+  };
   messageSizeLimit?: string;
   enableAPI: boolean;
   enableStats: boolean;
@@ -68,9 +70,11 @@ export const defaults: Partial<MailuOptions> = {
   domain: 'yourdomain.tld',
   postmaster: 'admin',
   tlsFlavor: 'letsencrypt',
-  rateLimitAuthIP: 5,
-  rateLimitAuthUser: 50,
-  rateLimitMessage: 200,
+  rateLimit: {
+    authIP: 5,
+    authUser: 50,
+    message: 200,
+  },
   enableStats: false,
   siteName: 'Mailu',
   website: 'https://mailu.io',

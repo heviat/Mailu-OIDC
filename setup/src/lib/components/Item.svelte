@@ -40,8 +40,18 @@
   const i = Math.floor(Math.random() * 10000);
 
   let inputsContainer = $state<HTMLDivElement>();
+  export const focus = () => {
+    const input = inputsContainer?.querySelector('input');
+    if (!input) return;
+
+    window.requestAnimationFrame(() => {
+      input.focus();
+      input.selectionStart = input.selectionEnd = input.value.length;
+    });
+  };
   let hidden = $derived.by(() => {
     if (!inputs || !inputsContainer) return true;
+    if (type === 'other') return false;
 
     const isActive = type === 'checkbox' ? value : value === group;
     const isFocused =
@@ -49,17 +59,7 @@
       inputsContainer.contains(document.activeElement) &&
       document.activeElement.tagName === 'INPUT';
 
-    if (isActive && !isFocused) {
-      const input = inputsContainer.querySelector('input');
-      if (input) {
-        window.requestAnimationFrame(() => {
-          input.focus();
-          input.selectionStart = input.selectionEnd = input.value.length;
-        });
-      } else {
-        console.error('No input found in RadioItem');
-      }
-    }
+    if (isActive && !isFocused) focus();
 
     return !isActive && !isFocused;
   });
@@ -103,9 +103,9 @@
       {@render content()}
     </label>
   {:else}
-    <div class="list-group-item py-3">
+    <button class="w-100 list-group-item py-3" onclick={focus}>
       {@render content()}
-    </div>
+    </button>
   {/if}
 </div>
 

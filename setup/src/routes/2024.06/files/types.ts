@@ -65,6 +65,7 @@ export const defaults: Partial<MailuOptions> = {
   dockerOrg: 'ghcr.io/heviat',
   version: 'latest',
   root: '/mailu',
+  domain: 'yourdomain.tld',
   postmaster: 'admin',
   tlsFlavor: 'letsencrypt',
   rateLimitAuthIP: 5,

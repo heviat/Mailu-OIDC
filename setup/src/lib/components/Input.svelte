@@ -1,68 +1,47 @@
 <script lang="ts" context="module">
+  import { getContext } from 'svelte';
   import type { HTMLInputAttributes } from 'svelte/elements';
 
-  export interface Props extends HTMLInputAttributes {
-    input: HTMLInputAttributes['type'];
-    id: string;
-    title: string;
+  export interface Props extends Omit<HTMLInputAttributes, 'id'> {
+    type?: HTMLInputAttributes['type'];
+    title?: string;
     description?: string;
-    element?: HTMLInputElement;
-    value: string | number;
-  }
-
-  export class Input {
-    input: Props;
-    _value = $state<string | number>('');
-    _element = $state<HTMLInputElement | undefined>();
-
-    constructor(input: Props) {
-      this.input = input;
-      this._value = input.value;
-    }
-
-    get value() {
-      return this._value;
-    }
-
-    set value(value: string | number) {
-      this._value = value;
-    }
-
-    set element(element: HTMLInputElement) {
-      this._element = element;
-    }
-
-    focus() {
-      if (this._element) {
-        this._element.selectionStart = this._element.selectionEnd = this._element.value.length;
-        this._element.focus();
-      }
-    }
+    group?: string | number;
+    value?: string | number;
   }
 </script>
 
 <script lang="ts">
   let {
-    input,
-    id,
+    type = 'text',
     title,
     description,
-    element = $bindable(),
+    group = $bindable(),
     value = $bindable(),
+    oninput,
     ...props
   }: Props = $props();
+
+  const stepId = getContext<string>('step-id');
+  const id = 'custom' + stepId.charAt(0).toUpperCase() + stepId.slice(1);
+  const i = Math.floor(Math.random() * 10000);
 </script>
 
 <div class="form-group">
-  <label class="form-label" for={title}>{title}</label>
+  {#if title}
+    <label class="form-label" for="{id}{i}">{title}</label>
+  {/if}
   <input
-    bind:this={element}
+    {...props}
     class="form-control"
-    type={input}
-    {id}
+    {type}
+    id="{id}{i}"
     placeholder={description}
     bind:value
     tabindex="0"
-    {...props}
+    oninput={event => {
+      group = value;
+      oninput?.(event);
+    }}
   />
 </div>

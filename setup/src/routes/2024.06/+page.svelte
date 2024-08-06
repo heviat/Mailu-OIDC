@@ -16,14 +16,11 @@
   import WebmailTypeStep from '$lib/steps/WebmailTypeStep.svelte';
   import { generateDockerComposeYml } from './files/docker-compose.yml/builder';
   import { generateMailuEnv } from './files/mailu.env/builder';
+  import { createRandomString } from '$lib/utils';
 
   let options: Partial<MailuOptions> = $state({
     ...defaults,
-    rateLimit: {
-      authIP: defaults.rateLimit?.authIP ?? 5,
-      authUser: defaults.rateLimit?.authUser ?? 50,
-      message: defaults.rateLimit?.message ?? 200,
-    },
+    apiToken: createRandomString(32),
   });
   let inputs = $state({
     root: '/opt/mailu',

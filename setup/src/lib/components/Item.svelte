@@ -88,6 +88,7 @@
       id="{id}{i}"
       {value}
       bind:group
+      tabindex={0}
     />
   {:else if type === 'checkbox'}
     <input
@@ -96,6 +97,7 @@
       name={id}
       id="{id}{i}"
       bind:checked={value}
+      tabindex={0}
     />
   {/if}
   {#if type === 'radio' || type === 'checkbox'}

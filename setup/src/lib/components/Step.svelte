@@ -35,7 +35,7 @@
 
 {#if ctx.currentStep?.id === id}
   <header class="py-2">
-    <h3 class="fw-semibold">
+    <h3 class="fw-semibold fs-3">
       {title}
       {#if details}
         &nbsp;<a
@@ -44,7 +44,8 @@
           href="#moreDetails"
           role="button"
           aria-expanded="false"
-          aria-controls="moreDetails"><Icon id="info-circle" /></a
+          aria-controls="moreDetails"
+          tabindex={0}><Icon id="info-circle" /></a
         >
       {/if}
     </h3>

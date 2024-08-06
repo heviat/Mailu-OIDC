@@ -1,6 +1,7 @@
 <script lang="ts" context="module">
   interface Options {
     enableAPI?: boolean;
+    apiToken?: string;
   }
   interface Props {
     options: Options;
@@ -8,7 +9,8 @@
 </script>
 
 <script lang="ts">
-  import Item from '../components/Item.svelte';
+  import Input from '$lib/components/Input.svelte';
+import Item from '../components/Item.svelte';
   import Step from '../components/Step.svelte';
 
   let { options = $bindable() }: Props = $props();
@@ -28,7 +30,9 @@
     value={true}
     title="Yes, enable API"
     description="Enable the RESTful API."
-  />
+  >
+    <Input title="API token" bind:value={options.apiToken} />
+  </Item>
   <Item
     type="radio"
     bind:group={options.enableAPI}
@@ -38,7 +42,12 @@
   />
   {#snippet hint()}
     {#if options.enableAPI}
-      The RESTful API will be enabled. You can access the API at <code>/api</code>.
+      <p>
+        The RESTful API will be enabled. You can access the API at <code>/api</code>.
+      </p>
+      <p>
+        The API token can also be changed later in the <code>mailu.env</code> file.
+      </p>
     {:else}
       The RESTful API will be disabled.
     {/if}

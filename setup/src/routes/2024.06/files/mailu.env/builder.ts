@@ -70,17 +70,17 @@ export const generateMailuEnv = (opt: MailuEnvOptions) => {
       opt.tlsFlavor,
       'Choose how secure connections will behave (value: letsencrypt, cert, notls, mail, mail-letsencrypt)'
     )
-    .if(!!opt.rateLimitAuthIP, env =>
+    .if(!!opt.rateLimit.authIP, env =>
       env.var(
         'AUTH_RATELIMIT_IP',
-        `${opt.rateLimitAuthIP}/hour`,
+        `${opt.rateLimit.authIP}/hour`,
         'Authentication rate limit per IP (per /24 on ipv4 and /48 on ipv6)'
       )
     )
-    .if(!!opt.rateLimitAuthUser, env =>
+    .if(!!opt.rateLimit.authUser, env =>
       env.var(
         'AUTH_RATELIMIT_USER',
-        opt.rateLimitAuthUser + '/day',
+        opt.rateLimit.authUser + '/day',
         'Authentication rate limit per user (regardless of the source-IP)'
       )
     )
@@ -120,8 +120,8 @@ export const generateMailuEnv = (opt: MailuEnvOptions) => {
       'Default: accept messages up to 50MB',
       'Max attachment size will be 33% smaller'
     )
-    .if(!!opt.rateLimitMessage, env =>
-      env.var('MESSAGE_RATELIMIT', opt.rateLimitMessage + '/day', 'Message rate limit (per user)')
+    .if(!!opt.rateLimit.message, env =>
+      env.var('MESSAGE_RATELIMIT', opt.rateLimit.message + '/day', 'Message rate limit (per user)')
     )
     .var(
       'RELAYNETS',

@@ -28,6 +28,9 @@
 <script lang="ts">
   let { for: options, children: steps }: Props = $props();
 
+  let prevButton = $state<HTMLButtonElement>();
+  let nextButton = $state<HTMLButtonElement>();
+
   let step = $state(0);
   let ctx = new SetupContext();
   setContext('setup', ctx);
@@ -44,6 +47,35 @@
   });
 </script>
 
+<svelte:document onkeydown={e => {
+  const add = ['ArrowLeft', 'ArrowUp'].includes(e.key) ? -1 : 1;
+
+  console.log(e.key);
+
+  if (['ArrowLeft', 'ArrowRight', 'Enter'].includes(e.key)) {
+    if (e.key !== 'Enter') e.preventDefault();
+    if (step + add < 0 || step + add >= ctx.steps.length) return;
+    if (document.activeElement !== prevButton && document.activeElement !== nextButton && document.activeElement?.tagName !== 'INPUT') return;
+
+    step += add;
+
+    requestAnimationFrame(() => {
+      document.querySelector('input')?.focus();
+    });
+  } else if (['ArrowUp', 'ArrowDown'].includes(e.key)) {
+    const inputs = Array.from(document.querySelectorAll('input'));
+    const index = inputs.indexOf(document.activeElement as HTMLInputElement);
+
+    if (index >= 0) {
+      if (index + add < 0 || index + add >= inputs.length) return;
+
+      inputs[index + add]?.focus();
+    } else {
+      inputs[0]?.focus();
+    }
+  }
+}} />
+
 <div class="card p-5 text-center mt-5">
   {#if steps}
     {@render steps()}
@@ -57,21 +89,25 @@
     {/if}
     <div class="prevnext d-flex justify-content-between mt-4">
       <button
+        bind:this={prevButton}
         class="btn btn-secondary px-4"
         disabled={step === 0}
         onclick={() => {
           step--;
-        }}>Back</button
+        }}
+        tabindex={0}>Back</button
       >
       <span class="opacity-50">Step {step + 1} of {ctx.steps.length}</span>
       {#if step === ctx.steps.length - 1}
         <a class="btn btn-primary px-4" {href}>Finish</a>
       {:else}
         <button
+          bind:this={nextButton}
           class="btn btn-primary px-4"
           onclick={() => {
             step++;
-          }}>Next</button
+          }}
+          tabindex={0}>Next</button
         >
       {/if}
     </div>

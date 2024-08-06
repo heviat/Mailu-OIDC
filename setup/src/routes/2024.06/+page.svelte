@@ -17,6 +17,9 @@
   import { generateDockerComposeYml } from './files/docker-compose.yml/builder';
   import { generateMailuEnv } from './files/mailu.env/builder';
   import { createRandomString } from '$lib/utils';
+  import Ipv4Step from '$lib/steps/Ipv4Step.svelte';
+  import Ipv6Step from '$lib/steps/Ipv6Step.svelte';
+  import EnableResolverStep from '$lib/steps/EnableResolverStep.svelte';
 
   let options: Partial<MailuOptions> = $state({
     ...defaults,
@@ -44,6 +47,9 @@
     <WebmailTypeStep bind:options />
     <OptionalServicesStep bind:options />
     <EnableApiStep bind:options />
+    <Ipv4Step bind:options />
+    <Ipv6Step bind:options />
+    <EnableResolverStep bind:options />
   </Setup>
   <div class="d-flex flex-column justify-content-center gap-5">
     <GeneratedFiles {generateDockerComposeYml} {generateMailuEnv} {options} />

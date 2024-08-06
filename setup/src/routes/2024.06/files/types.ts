@@ -16,6 +16,8 @@ type DockerComposeYmlSpecificOptions = {
   root: string;
   bind4?: string;
   bind6?: string;
+  enableIpv6?: boolean;
+  enableResolver?: boolean;
   dns?: string;
 };
 
@@ -88,4 +90,6 @@ export const defaults: Partial<MailuOptions> = {
   enableTika: false,
   bind4: '127.0.0.1',
   subnet: '192.168.203.0/24',
+  enableIpv6: false,
+  enableResolver: true,
 };

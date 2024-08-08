@@ -9,8 +9,8 @@ ENV LANG C.UTF-8
 ARG VERSION
 LABEL version=$VERSION
 
-RUN set -euxo pipefail \
-  ; apk add --no-cache bash inotify-tools tzdata util-linux
+RUN set -euxo pipefail
+RUN apk add --no-cache bash inotify-tools tzdata util-linux
 
 COPY run.sh /
 

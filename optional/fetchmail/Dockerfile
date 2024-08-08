@@ -6,9 +6,9 @@ FROM base
 ARG VERSION=local
 LABEL version=$VERSION
 
-RUN set -euxo pipefail \
-  ; apk add --no-cache fetchmail openssl \
-  ; mkdir -p /data
+RUN set -euxo pipefail
+RUN apk add --no-cache fetchmail openssl
+RUN mkdir -p /data
 
 COPY fetchmail.py /
 

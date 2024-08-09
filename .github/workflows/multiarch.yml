@@ -2,7 +2,7 @@ name: start-linux-multiarch
 on:
   pull_request:
     branches:
-      - main
+      - master
       - oidc
   merge_group:
 
@@ -24,7 +24,7 @@ jobs:
         MAILU_VERSION: ${{ env.MAILU_VERSION }}
         PINNED_MAILU_VERSION: ${{ env.PINNED_MAILU_VERSION }}
         DOCKER_ORG: ${{ env.DOCKER_ORG_DERIVED }}
-        BRANCH: ${{ env.BRANCH }}
+        BRANCH: ${{ env.BRANCH}}
         DEPLOY: ${{ env.DEPLOY }}
         RELEASE: ${{ env.RELEASE }}
     steps:
@@ -35,24 +35,13 @@ jobs:
       - name: Extract branch name
         shell: bash
         run: |
-          echo "BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
-        #For branch TESTING, we set the image tag to pr-xxxx
-      - name: Derive MAILU_VERSION and PINNED_MAILU_VERSION and DEPLOY/RELEASE for branch testing
-        if: env.BRANCH == 'testing'
+          echo "BRANCH=${GITHUB_REF_NAME}" >> $GITHUB_ENV
+      - name: Derive MAILU_VERSION and DEPLOY/RELEASE for development branches
         shell: bash
         env:
-          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+          BRANCH: ${{ github.ref_name }}
         run: |
-          echo "MAILU_VERSION=pr-${COMMIT_MESSAGE//[!0-9]/}" >> $GITHUB_ENV
-          echo "PINNED_MAILU_VERSION=pr-${COMMIT_MESSAGE//[!0-9]/}" >> $GITHUB_ENV
-          echo "DOCKER_ORG_DERIVED=${{ env.DOCKER_ORG }}" >> $GITHUB_ENV
-          echo "DEPLOY=true" >> $GITHUB_ENV
-          echo "RELEASE=false" >> $GITHUB_ENV
-      - name: Derive MAILU_VERSION and DEPLOY/RELEASE for other branches than testing
-        if: env.BRANCH != 'testing'
-        shell: bash
-        run: |
-          echo "MAILU_VERSION=${{ env.BRANCH }}" >> $GITHUB_ENV
+          echo "MAILU_VERSION="${BRANCH////-} >> $GITHUB_ENV
           echo "DOCKER_ORG_DERIVED=${{ env.DOCKER_ORG }}" >> $GITHUB_ENV
           echo "DEPLOY=true" >> $GITHUB_ENV
           echo "RELEASE=false" >> $GITHUB_ENV
@@ -94,13 +83,15 @@ jobs:
       - derive-variables
     uses: ./.github/workflows/build_test_deploy.yml
     with:
-      architecture: 'linux/amd64,linux/arm64/v8,linux/arm/v7'
+      # linux/arm64/v8,linux/arm/v7 will be added when GitHub hosted arm64 runners are available by the end of 2024
+      # https://github.blog/news-insights/product-news/arm64-on-github-actions-powering-faster-more-efficient-build-systems/
+      architecture: 'linux/amd64'
       mailu_version: ${{needs.derive-variables.outputs.MAILU_VERSION}}
       pinned_mailu_version: ${{needs.derive-variables.outputs.PINNED_MAILU_VERSION}}
       docker_org: ${{needs.derive-variables.outputs.DOCKER_ORG}}
       branch: ${{needs.derive-variables.outputs.BRANCH}}
-      deploy: ${{needs.derive-variables.outputs.DEPLOY}}
-      release: ${{needs.derive-variables.outputs.RELEASE}}
+      deploy: ${{needs.derive-variables.outputs.DEPLOY == 'true'}}
+      release: ${{needs.derive-variables.outputs.RELEASE == 'true'}}
     secrets: inherit
 
  # This job is watched by bors. It only complets if building,testing and deploy worked.

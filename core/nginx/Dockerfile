@@ -5,9 +5,9 @@ FROM base as static
 
 COPY static/ /static/
 
-RUN set -euxo pipefail \
-  ; gzip -k9 /static/*.ico /static/*.txt \
-  ; chmod a+rX-w -R /static
+RUN set -euxo pipefail
+RUN gzip -k9 /static/*.ico /static/*.txt
+RUN chmod a+rX-w -R /static
 
 
 # nginx image
@@ -16,9 +16,9 @@ FROM base
 ARG VERSION
 LABEL version=$VERSION
 
-RUN set -euxo pipefail \
-  ; apk add --no-cache certbot nginx nginx-mod-http-brotli nginx-mod-mail openssl \
-  ; apk add --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/main dovecot-lua dovecot-pigeonhole-plugin 'dovecot-lmtpd<2.4' dovecot-pop3d dovecot-submissiond
+RUN set -euxo pipefail
+RUN apk add --no-cache certbot nginx nginx-mod-http-brotli nginx-mod-mail openssl
+RUN apk add --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/main dovecot-lua dovecot-pigeonhole-plugin 'dovecot-lmtpd<2.4' dovecot-pop3d dovecot-submissiond
 
 COPY conf/ /conf/
 COPY --from=static /static/ /static/

@@ -7,22 +7,20 @@ ENV VERSION=$version
 COPY requirements.txt /requirements.txt
 COPY . /docs
 
-RUN set -euxo pipefail \
-  ; machine="$(uname -m)" \
-  ; deps="gcc musl-dev graphviz" \
-  ; [[ "${machine}" != x86_64 ]] && \
-      deps="${deps} cargo" \
-  ; apk add --no-cache --virtual .build-deps ${deps} \
-  ; [[ "${machine}" == armv7* ]] && \
+RUN set -euxo pipefail
+ENV MACHINE="$(uname -m)"
+ENV DEPS="gcc musl-dev graphviz"
+RUN if [ -e ${MACHINE} != x86_64 ]; then DEPS="${DEPS} cargo"; fi
+RUN apk add --no-cache --virtual .build-deps $DEPS
+RUN if [ -e ${MACHINE} = armv7* ]; then \
       mkdir -p /root/.cargo/registry/index && \
-      git clone --bare https://github.com/rust-lang/crates.io-index.git /root/.cargo/registry/index/github.com-1285ae84e5963aae \
-  ; pip3 install -r /requirements.txt \
-  ; mkdir -p /build/$VERSION/ \
-  ; dot -Tsvg /docs/mailu-network-diagram.dot -o /docs/contributors/mailu-network-diagram.svg \
-  ; sphinx-build -W /docs /build/$VERSION \
-  ; apk del .build-deps \
-  ; rm -rf /root/.cargo
-
+      git clone --bare https://github.com/rust-lang/crates.io-index.git /root/.cargo/registry/index/github.com-1285ae84e5963aae; fi
+RUN pip3 install -r /requirements.txt
+RUN mkdir -p /build/$VERSION
+RUN dot -Tsvg /docs/mailu-network-diagram.dot -o /docs/contributors/mailu-network-diagram.svg
+RUN sphinx-build -W /docs /build/$VERSION
+RUN apk del .build-deps
+RUN rm -rf /root/.cargo
 
 # Build nginx deployment image including generated html
 FROM nginx:1.25.5-alpine

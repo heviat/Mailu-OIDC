@@ -4,6 +4,9 @@ on:
     branches:
       - master
       - oidc
+  push:
+    branches:
+      - '2024.06'
   merge_group:
 
 concurrency: ci-multiarch-${{ github.ref }}
@@ -35,18 +38,16 @@ jobs:
       - name: Extract branch name
         shell: bash
         run: |
-          echo "BRANCH=${GITHUB_REF_NAME}" >> $GITHUB_ENV
+          echo "BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
       - name: Derive MAILU_VERSION and DEPLOY/RELEASE for development branches
         shell: bash
-        env:
-          BRANCH: ${{ github.ref_name }}
         run: |
           echo "MAILU_VERSION="${BRANCH////-} >> $GITHUB_ENV
           echo "DOCKER_ORG_DERIVED=${{ env.DOCKER_ORG }}" >> $GITHUB_ENV
           echo "DEPLOY=true" >> $GITHUB_ENV
           echo "RELEASE=false" >> $GITHUB_ENV
       - name: Derive PINNED_MAILU_VERSION and DEPLOY/RELEASE for normal release x.y
-        if: env.BRANCH != 'testing' && env.BRANCH != 'staging' && env.BRANCH != 'master' && !(contains(env.BRANCH, 'test-'))
+        if: env.BRANCH != 'oidc' && env.BRANCH != 'testing' && env.BRANCH != 'staging' && env.BRANCH != 'master' && !(endsWith(env.BRANCH, '/merge')) && !(startsWith(env.BRANCH, 'test-')) && !(startsWith(env.BRANCH, 'oidc-'))
         shell: bash
         run: |
           version=$( git tag --sort=version:refname --list "${{ env.MAILU_VERSION }}.*" | tail -1  );root_version=${version%.*};patch_version=${version##*.};if [ "$patch_version" == "" ]; then pinned_version=${{ env.MAILU_VERSION }}.0; else pinned_version=$root_version.$(expr $patch_version + 1); fi;echo "PINNED_MAILU_VERSION=$pinned_version" >> $GITHUB_ENV
@@ -60,6 +61,16 @@ jobs:
           echo "PINNED_MAILU_VERSION=staging" >> $GITHUB_ENV
           echo "DEPLOY=false" >> $GITHUB_ENV
           echo "RELEASE=false" >> $GITHUB_ENV
+      - name: Derive PINNED_MAILU_VERSION and DEPLOY/RELEASE for pull requests
+        if: endsWith(env.BRANCH, '/merge')
+        shell: bash
+        env:
+          PR_NUMBER: ${{ github.event.number }}
+        run: |
+          echo "MAILU_VERSION=pr-${PR_NUMBER//[!0-9]/}" >> $GITHUB_ENV
+          echo "PINNED_MAILU_VERSION=pr-${PR_NUMBER//[!0-9]/}" >> $GITHUB_ENV
+          echo "DEPLOY=false" >> $GITHUB_ENV
+          echo "RELEASE=false" >> $GITHUB_ENV
       - name: Derive PINNED_MAILU_VERSION for master
         if: env.BRANCH == 'master'
         shell: bash
@@ -69,8 +80,8 @@ jobs:
           echo "PINNED_MAILU_VERSION=$GITHUB_SHA" >> $GITHUB_ENV
           echo "DEPLOY=true" >> $GITHUB_ENV
           echo "RELEASE=false" >> $GITHUB_ENV
-      - name: Derive for branch test-*
-        if: contains(env.BRANCH, 'test-')
+      - name: Derive for branches test-*, oidc, oidc-* and merges
+        if: startsWith(env.BRANCH, 'test-') || startsWith(env.BRANCH, 'oidc-') || env.BRANCH == 'oidc'
         run: |
           echo "MAILU_VERSION=${{ env.BRANCH }}" >> $GITHUB_ENV
           echo "PINNED_MAILU_VERSION=${{ env.BRANCH }}" >> $GITHUB_ENV
@@ -90,8 +101,8 @@ jobs:
       pinned_mailu_version: ${{needs.derive-variables.outputs.PINNED_MAILU_VERSION}}
       docker_org: ${{needs.derive-variables.outputs.DOCKER_ORG}}
       branch: ${{needs.derive-variables.outputs.BRANCH}}
-      deploy: ${{needs.derive-variables.outputs.DEPLOY == 'true'}}
-      release: ${{needs.derive-variables.outputs.RELEASE == 'true'}}
+      deploy: ${{needs.derive-variables.outputs.DEPLOY}}
+      release: ${{needs.derive-variables.outputs.RELEASE}}
     secrets: inherit
 
 ################################################

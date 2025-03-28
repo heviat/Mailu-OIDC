@@ -205,7 +205,7 @@ class OicClient:
             return None, None, None, None
         user_response = self.client.do_user_info_request(
             access_token=response['access_token'])
-        return user_response['email'], user_response['sub'], response["id_token"], response
+        return user_response[app.config.get('OIDC_USERNAME_CLAIM', 'email')], user_response['sub'], response["id_token"], response
 
 
     def get_token(self, username, password):

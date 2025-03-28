@@ -41,7 +41,10 @@ def login():
             flask.flash('Wrong e-mail or password', 'error')
             # TODO: Check if this is the correct way to handle this
             return flask.render_template('login.html', form=form, fields=fields, openId=app.config['OIDC_ENABLED'], openIdEndpoint=utils.oic_client.get_redirect_url())
-        
+
+        if '@' not in username:
+            username = username + '@' + app.config.get('OIDC_USER_DOMAIN', app.config['DOMAIN'])
+
         user = models.User.get(username)
         if user is None:
             user = models.User.create(username)

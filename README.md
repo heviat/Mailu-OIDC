@@ -89,6 +89,8 @@ properties are needed in `mailu.env`:
 | `OIDC_VERIFY_SSL`                       | Disable TLS certificate verification for the OIDC client                                                            | `True` \| `False`         |
 | `OIDC_CHANGE_PASSWORD_REDIRECT_ENABLED` | If enabled, OIDC users will have an button to get redirect to their OIDC provider to change their password          | `True` \| `False`         |
 | `OIDC_CHANGE_PASSWORD_REDIRECT_URL`     | Defaults to provider issuer url appended by `/.well-known/change-password`.                                         | [https://`host`/pw-change]() |
+| `OIDC_USERNAME_CLAIM`                   | 	The OIDC claim used as the username. If the selected claim contains an email address, it will be used as is. If it is not an email (e.g., `sub`), the email address will be constructed as `<OIDC_USERNAME_CLAIM>@<OIDC_USER_DOMAIN>`. Defaults to `email`. | `email` \| `sub`
+| `OIDC_USER_DOMAIN`                      | The domain used when constructing an email from a non-email username (e.g., when `OIDC_USERNAME_CLAIM=sub`). Ignored if `OIDC_USERNAME_CLAIM` is already an email. Defaults to the value of `DOMAIN`. | `example.com`
 
 Here is a snippet for easy copy paste:
 

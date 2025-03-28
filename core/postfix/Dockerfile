@@ -6,8 +6,8 @@ FROM base
 ARG VERSION=local
 LABEL version=$VERSION
 
-RUN set -euxo pipefail \
-  ; apk add --no-cache cyrus-sasl-login postfix postfix-pcre logrotate
+RUN set -euxo pipefail
+RUN apk add --no-cache cyrus-sasl-login postfix postfix-pcre logrotate
 
 COPY conf/ /conf/
 COPY start.py /

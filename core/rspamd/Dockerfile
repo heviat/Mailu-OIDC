@@ -6,10 +6,10 @@ FROM base
 ARG VERSION=local
 LABEL version=$VERSION
 
-RUN set -euxo pipefail \
-  ; apk add --no-cache rspamd rspamd-controller rspamd-fuzzy rspamd-proxy \
-  ; mkdir /run/rspamd \
-  ; mkdir /overrides
+RUN set -euxo pipefail
+RUN apk add --no-cache rspamd rspamd-controller rspamd-fuzzy rspamd-proxy
+RUN mkdir /run/rspamd
+RUN mkdir /overrides
 
 COPY conf/ /conf/
 COPY start.py /

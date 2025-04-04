@@ -5,13 +5,19 @@
 
 version: 2
 updates:
-  - package-ecosystem: "pip"
+  - package-ecosystem: pip
     directories:
-      - "/"
-      - "/core/base"
+      - /
+      - /docs
+      - /core/base
+      - /tests
     schedule:
-      interval: "daily"
-  - package-ecosystem: "github-actions"
-    directory: "/"
+      interval: daily
+  - package-ecosystem: npm
+    directory: /core/admin/assets
     schedule:
-      interval: "daily"
+      interval: daily
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: daily

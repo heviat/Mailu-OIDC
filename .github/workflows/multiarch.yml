@@ -31,7 +31,7 @@ jobs:
         DEPLOY: ${{ env.DEPLOY }}
         RELEASE: ${{ env.RELEASE }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           # fetch-depth 0 is required to also retrieve all tags.
           fetch-depth: 0

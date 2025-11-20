@@ -88,7 +88,7 @@ jobs:
       matrix: ${{ steps.targets.outputs.matrix }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Create matrix
         id: targets
         run: |
@@ -110,7 +110,7 @@ jobs:
      contents: read
      packages: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Retrieve global variables
         shell: bash
         run: |
@@ -185,7 +185,7 @@ jobs:
      contents: read
      packages: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Retrieve global variables
         shell: bash
         run: |
@@ -262,7 +262,7 @@ jobs:
      contents: read
      packages: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Retrieve global variables
         shell: bash
         run: |
@@ -340,7 +340,7 @@ jobs:
      contents: read
      packages: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Retrieve global variables
         shell: bash
         run: |
@@ -423,7 +423,7 @@ jobs:
           - target: "filters"
             time: "2"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Retrieve global variables
         shell: bash
         run: |
@@ -472,7 +472,7 @@ jobs:
       matrix:
         target: ["setup", "docs", "fetchmail", "webmail", "admin", "traefik-certdumper", "radicale", "rspamd", "oletools", "postfix", "dovecot", "unbound", "nginx"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Retrieve global variables
         shell: bash
         run: |
@@ -535,11 +535,11 @@ jobs:
     needs:
       - deploy
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           # fetch-depth 0 is required to also retrieve all tags.
           fetch-depth: 0
-        # A bug in actions/checkout@v4 results in all files having mtime of the job running.
+        # A bug in actions/checkout@v6 results in all files having mtime of the job running.
       - name: Restore Timestamps
         uses: chetan/git-restore-mtime-action@v2
       - name: Retrieve global variables

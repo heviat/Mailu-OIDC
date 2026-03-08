@@ -12,6 +12,13 @@
 
 ---
 
+> [!WARNING]
+> As our company shut down, this fork is no longer maintained.
+> We highly recommend switching to a maintained project, for 
+> example have a look at [Stalwart](https://github.com/stalwartlabs/stalwart).
+>
+> We are very sorry for the circumstances.
+
 Mailu is a simple yet full-featured mail server as a set of Docker images.
 It is free software (both as in free beer and as in free speech), open to
 suggestions and external contributions. The project aims at providing people

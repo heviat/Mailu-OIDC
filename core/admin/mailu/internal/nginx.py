@@ -106,6 +106,7 @@ def handle_authentication(headers):
             ip = urllib.parse.unquote(headers["Client-Ip"])
         except:
             app.logger.warning(f'Received undecodable user/password from front: {headers.get("Auth-User", "")!r}')
+            # app.logger.warn(f'Received undecodable user/password from front: {headers.get("Auth-User", "")!r}')
         else:
             try:
                 user = models.User.query.get(user_email) if '@' in user_email else None
